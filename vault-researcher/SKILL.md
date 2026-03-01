@@ -1,14 +1,28 @@
 ---
 name: vault-researcher
 description: >
-  Conducts deep research and organizes findings into an Obsidian vault as a
-  structured knowledge base. Handles two entry points: a topic/question to
-  investigate, or an existing document to decompose into atomic notes. Use
-  when the user says "research", "investigate", "find out about", "go deeper",
-  "process this report", "add this to the vault", "break this down", "what do
-  we know about", or references a MOC. Use whenever the user wants to build
-  or query a research knowledge base in Obsidian. Do not use for general vault
-  housekeeping like renaming or reorganizing files.
+  Use this skill whenever the user mentions an Obsidian vault, knowledge base,
+  MOC, atomic notes, or research backlog — it contains the vault's note
+  templates, folder structure, tagging system, and research methodology that
+  cannot be replicated without consulting it. Activate for: researching topics
+  and creating vault notes, processing documents or reports into atomic notes,
+  querying existing vault knowledge ("what do we know about X"), verifying
+  findings, managing Maps of Content, or continuing a previous research session.
+  Also use when the user says "research", "investigate", "dig into", "look
+  into", "explore", "go deeper", "break this down", "add to vault", "check the
+  backlog", or provides a document/PDF/AI report for vault integration. Do not
+  use for vault housekeeping (file renaming, reorganization), Obsidian plugin
+  setup, theme customization, or Dataview queries.
+license: MIT
+compatibility: >
+  Requires Claude Code (sub-agents, Bash tool, model routing). Depends on
+  obsidian CLI (kepano/obsidian-skills) and defuddle CLI (defuddle-cli npm
+  package). Not compatible with Claude.ai (no sub-agent or Bash support).
+metadata:
+  author: alvdef
+  version: 1.0.0
+  category: research
+  tags: [obsidian, knowledge-management, research, zettelkasten, notes]
 ---
 
 # Vault Researcher
@@ -206,13 +220,21 @@ conduct new web research — it structures existing content.
 
 ### 1. Receive
 
+**Preferred workflow for long documents** (e.g. Gemini Deep Research reports):
+the user saves the file directly to `10-Inbox/Clippings/` in their vault, then
+tells you to process it. Read it from disk — don't ask them to paste it in
+chat, since that wastes context on verbatim content you can read from the file.
+
+If the user does paste content in chat, save it to `10-Inbox/Clippings/`
+yourself before processing.
+
 Ask the user (if not already provided):
 - What tool produced this? (for `source_tool` frontmatter field)
 - What was the original query? (for `source_query`)
 - Which MOC does this relate to?
 
-Save the original in `10-Inbox/Clippings/` with a `CLIP-` prefix and
-`processed: false`. Do not edit the original body.
+Save the original with a `CLIP-` prefix and `processed: false`. Do not edit
+the original body.
 
 ### 2. Scan
 
@@ -363,6 +385,34 @@ Run this at the END of every session, regardless of what was done:
 
    After migrating, trim `CLAUDE.md` back to its stable sections. See
    `references/claude-md-spec.md` for what belongs there.
+
+## Examples
+
+**Example 1: Topic research**
+User: "I've been reading about PFAS contamination in drinking water. Dig into the regulatory landscape for me — who's doing what and where are the gaps."
+Actions:
+1. Orient — read vault MOCs, Backlog, recent log (delegate to Haiku)
+2. Synthesize existing coverage, confirm no overlap
+3. Propose: "I'll create MOC-PFAS-Regulation and focus on US EPA, EU REACH, and state-level bans. Sound right?"
+4. After approval → web research, create `PN-EPA-proposes-enforceable-PFAS-limits`, `ENT-EPA`, `SRC-EPA-2024-final-rule`, etc.
+5. Surface findings, ask: "Emerging question — state-level limits are stricter than federal. Want me to go deeper on that, or pivot?"
+
+**Example 2: Document decomposition**
+User: "Here's a Gemini report on autonomous vehicle insurance models. Add it to the vault." [pastes report]
+Actions:
+1. Ask: "What tool generated this, and what was the query?" (for `source_tool` / `source_query`)
+2. Save as `CLIP-20260301-av-insurance-models` in `10-Inbox/Clippings/`
+3. Search vault for overlap
+4. Propose: "I can extract 6 concepts: 3 permanent notes on liability models, 2 entity profiles (Waymo, Munich Re), 1 comparison (usage-based vs traditional). Proceed?"
+5. After approval → synthesize each note body, batch-write via Haiku
+
+**Example 3: Vault query**
+User: "What do we have on lithium recycling?"
+Actions:
+1. Search vault with `obsidian search query="lithium recycling"`
+2. Read matching notes and parent MOC
+3. Summarize: "We have 4 notes covering hydrometallurgical processes and 2 entity profiles. The MOC shows this area at Growing depth. Gap: no coverage of direct recycling methods."
+4. Ask: "Want me to research direct recycling, or is this enough for now?"
 
 ## Model Strategy
 
