@@ -32,8 +32,9 @@ On first use or when unsure about vault conventions, read these references:
 Once familiar, you don't need to re-read them every session — just consult
 when creating a note type you haven't created recently.
 
-Also read `CLAUDE.md` (at vault root) for the user's research domain,
-current priorities, and project-specific rules.
+Also read `CLAUDE.md` (at vault root) for stable project context: client,
+research domain, and agent rules. Current priorities and research state live
+in the vault — see the Orient step in Research Loop.
 
 ## Intake — Determine What the User Needs
 
@@ -59,21 +60,57 @@ new questions, ask the user for direction, repeat.
 
 ### 1. Orient
 
-Read `00-Dashboard/Backlog.md` for pending research items and open threads.
-If the user didn't specify a focus, propose items from the backlog.
+Read `CLAUDE.md` for stable project context only — client, domain, agent
+rules. Do NOT use it as a source of research findings; those live in the vault.
 
-Search the vault for existing coverage:
-```
-obsidian search query="{topic}" limit=20
-```
+Build session context from the vault — delegate all reads to a sub-agent
+(model: haiku), since this is mechanical retrieval with no synthesis needed:
 
-If a MOC exists, read it. Report what the vault already covers and where the
-gaps are. If no MOC exists, create one (see `references/moc-format.md`) and
-confirm the initial scope and key questions with the user.
+> Prompt the Haiku sub-agent:
+> "Read vault context using obsidian-cli if available:
+> (1) run `obsidian search tag:type/moc limit=20`, then for each MOC read
+> its header, Key questions section, and Depth tracker — skip full wikilink
+> lists. (2) Read `00-Dashboard/Backlog.md`. (3) Read the most recent file
+> in `50-Research-Log/` by filename. Return all content verbatim.
+> If obsidian-cli is not available, use Glob to list `40-Maps/*.md`, read
+> each MOC file, read `00-Dashboard/Backlog.md` directly, and Glob
+> `50-Research-Log/*.md` sorted by name to find the most recent."
+
+Synthesize the returned content in this context: what the vault covers,
+what's pending, open threads from the last session. If the user didn't
+specify a focus, propose 2–3 items from the backlog ranked by priority.
+
+Delegate topic search to the same Haiku sub-agent:
+
+> "Search for existing coverage on '{topic}': run
+> `obsidian search query="{topic}" limit=20` if obsidian-cli is available,
+> otherwise use Grep with pattern='{topic}' across the vault.
+> Return results verbatim."
 
 Ask the user (if not already clear):
 - What specific question or angle to focus on?
 - Any constraints on scope or sources?
+
+**Creating a new MOC** — only if no suitable MOC exists. Before creating:
+
+1. Check existing MOCs for overlap: does this topic fit as a section of an
+   existing MOC rather than a new top-level map?
+2. Check scope: expect 5+ permanent notes spanning multiple sessions? If the
+   scope is narrower, hold findings in fleeting notes until it's clearer.
+3. Present options to the user before creating anything:
+
+   > "This topic isn't covered by existing MOCs. Options:
+   > A. Create `MOC-{topic}` (new top-level map)
+   > B. Add `## {Subtopic}` section to `[[MOC-{existing}]]`
+   > C. Hold in fleeting notes — revisit once scope is clearer"
+
+Never create a new MOC without user approval. See `references/moc-format.md`
+for the template.
+
+**Sub-MOC promotion**: when a section within an existing MOC reaches 7+
+notes, offer to promote it to a child MOC. The child links back to the parent
+via `parent_moc` in frontmatter; the parent MOC replaces the section with a
+link under "Related maps".
 
 ### 2. Investigate
 
@@ -90,10 +127,23 @@ Fleeting notes are temporary holding areas for findings that lack enough
 substance to become a proper note. They contain: the finding, source URL,
 and why it matters. They must be promoted or discarded before session end.
 
-For every note created:
-- Use the correct template from `references/note-templates.md`
-- Tag with `source/ai-generated` + `confidence/uncertain`
-- Link to the parent MOC and at least 1 related note
+For every note, follow a two-phase process:
+
+**Phase 1 — Synthesis (this context, Opus/Sonnet):** Determine the complete
+note content: title (claim-based), key insight, supporting evidence,
+implications, wikilinks to related notes and parent MOC. Do not delegate
+synthesis — the note body requires understanding of the research.
+
+**Phase 2 — Write (Haiku sub-agent):** Once content is decided, delegate
+file creation:
+
+> "Create a note at `{path}` with this exact content: {frontmatter + body}.
+> Use the template structure from `references/note-templates.md`.
+> Tag: `source/ai-generated` + `confidence/uncertain`.
+> Confirm when written."
+
+Never delegate Phase 1. Never do Phase 2 inline — file writes are
+mechanical and don't need the main model's reasoning capacity.
 
 ### 3. Surface and Ask
 
@@ -155,15 +205,20 @@ note must be at least one substantial paragraph.
 
 ### 4. Create
 
-After user approval:
-- Create each note using templates from `references/note-templates.md`
-- Write as synthesis in your own words — do not copy-paste
-- Tag: `source/ai-generated` + `confidence/uncertain`
-- Link back to the clipping as evidence: `Source: [[CLIP-{original}]]`
-- Link to parent MOC and related existing notes
+After user approval, synthesize each note body in this context: write in
+your own words, extract the core claim, add evidence and implications.
+Do not copy-paste from the source document.
 
-For concepts that overlap with existing notes, propose updating instead of
-duplicating. Ask the user.
+Then delegate all file writes to a Haiku sub-agent:
+
+> "Create `{path}` with this exact content: {frontmatter + body}.
+> Include: `source/ai-generated` + `confidence/uncertain` tags,
+> `Source: [[CLIP-{original}]]` link, links to parent MOC and related notes.
+> Confirm each file written."
+
+For concepts that overlap with existing notes, synthesize the update in this
+context, then delegate the edit to the Haiku sub-agent. Ask the user before
+updating any existing note.
 
 ### 5. Integrate
 
@@ -189,24 +244,85 @@ When the user asks to verify findings, or when contradictions surface:
 
 Run this at the END of every session, regardless of what was done:
 
-1. **No orphans**: Every note created must link to a MOC. Process or discard
-   all fleeting notes.
-2. **Update the MOC**: Add new links, refresh depth tracker, check off
-   answered questions, add gap markers for new holes.
-3. **Update the backlog**: Append new research threads, open questions, and
-   contradictions to `00-Dashboard/Backlog.md`. Check off any items completed
-   this session. Include wikilinks to the relevant MOC or note for context.
-4. **Write a research log**: Create or append to
-   `50-Research-Log/YYYY-MM-DD_HHmm.md` (see template in
-   `references/note-templates.md`). Document: what was done, notes created,
-   open questions, suggested next steps.
-5. **Report to user**: Summarize the session, show MOC state, suggest next
+1. **No orphans**: Verify every note created links to a MOC. Process or
+   discard all fleeting notes.
+
+2. **Prepare closing content (this context, Opus/Sonnet)**: Draft the full
+   content for all three mechanical updates before delegating:
+   - MOC: list of new wikilinks with annotations, depth tracker row updates,
+     questions to check off, new gap markers
+   - Backlog: new items to append, items to check off (with wikilinks)
+   - Research log: full log body (what was done, notes created, open
+     questions, suggested next steps)
+
+3. **Delegate all writes to a Haiku sub-agent** (one batch call):
+
+   > "Apply these closing updates:
+   > 1. In `40-Maps/{MOC}.md`: add under the correct headings — {wikilinks
+   >    with annotations}. Update depth tracker row for {area} to {depth}.
+   >    Check off {questions}. Add gap markers: {gaps}.
+   > 2. In `00-Dashboard/Backlog.md`: append to High priority — {new items}.
+   >    Check off: {completed items}.
+   > 3. Create `50-Research-Log/{YYYY-MM-DD_HHmm}.md` with this content:
+   >    {full log body}.
+   > Confirm each update."
+
+4. **Report to user**: Summarize the session, show MOC state, suggest next
    steps from the backlog.
+6. **CLAUDE.md hygiene**: First check that `CLAUDE.md` exists at vault root.
+   If it does not exist, alert the user:
+   > "No CLAUDE.md found. The vault needs one — see
+   > `references/claude-md-spec.md` for the template. Should I create it
+   > now from what I can infer about the project?"
+   Then offer to create it and migrate any project context found in other
+   root-level files (README.md, loose notes) into the correct sections.
 
-## Cost Efficiency
+   If `CLAUDE.md` exists, check if it has grown since the vault was last
+   updated — new findings, resolved decisions, or reference URLs added
+   outside the vault. If so, migrate them before closing:
 
-This skill is designed to run on lower-cost models (Sonnet, Haiku). Vault
-reads, searches, note creation, and MOC updates don't require heavy reasoning.
-Use `obsidian-cli` for vault queries instead of reading raw files — it's
-orders of magnitude cheaper in tokens. Reserve deeper reasoning for synthesis
-and insight extraction during the Investigate and Decomposition steps.
+   | Found in CLAUDE.md | Migrate to |
+   |--------------------|------------|
+   | Resolved decision  | `PN-*` note with `confidence/verified`, linked from MOC |
+   | Pending decision   | `00-Dashboard/Backlog.md` — High priority item |
+   | Reference URL      | `ENT-*` or `SRC-*` note in vault |
+   | Research finding   | Appropriate note type per `references/note-templates.md` |
+
+   After migrating, trim `CLAUDE.md` back to its stable sections. See
+   `references/claude-md-spec.md` for what belongs there.
+
+## Model Strategy
+
+Use three tiers based on task type, following Anthropic's model selection
+guidance (Opus = multi-hour research; Sonnet = agentic tool use; Haiku =
+sub-agent tasks):
+
+**Main context** — run the skill with Opus for deep research sessions
+(synthesis across conflicting sources, complex MOC design, multi-session
+investigations). Use Sonnet for routine sessions (backlog review,
+decomposing a single document, incremental updates).
+
+**Haiku sub-agents** — all mechanical operations, regardless of the main
+model. Haiku is explicitly designed for sub-agent tasks.
+
+| Task | Model |
+|------|-------|
+| Intake — routing decision | Main (Opus/Sonnet) |
+| Orient — synthesize vault state, propose focus | Main |
+| Investigate — web research, insight extraction | Main |
+| Investigate — detect contradictions, new questions | Main |
+| Surface and Ask | Main |
+| Decompose — atomicity decisions, propose plan | Main |
+| Verification — analyze evidence, update confidence | Main |
+| Closing — draft MOC/Backlog/Log content | Main |
+| CLAUDE.md hygiene — detect drift, decide migration | Main |
+| Orient — vault reads (MOC headers, Backlog, last log) | **Haiku** |
+| Investigate — write note files | **Haiku** |
+| Decompose — write note files (post-approval) | **Haiku** |
+| Closing — apply MOC edits, Backlog updates, Research Log | **Haiku** |
+| CLAUDE.md hygiene — write migrated notes | **Haiku** |
+
+Rule: **never delegate synthesis; never write files in the main context.**
+Use `obsidian-cli` for all vault queries — far cheaper in tokens than
+reading raw files.
+

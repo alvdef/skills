@@ -1,0 +1,191 @@
+{
+  "skill_name": "vault-researcher",
+  "eval_type": "model_routing",
+  "description": "Verify that the agent delegates mechanical operations to a Haiku sub-agent and keeps synthesis in the main context. Observable behavior: the Agent/Task tool must be called for mechanical ops; synthesis output must appear in the main turn before any write call.",
+  "evals": [
+    {
+      "id": "mr-1",
+      "name": "Orient — vault reads delegated to Haiku",
+      "prompt": "Let's start a research session. I want to look into container shipping decarbonization.",
+      "trigger": "orient_step",
+      "expected_delegates_to_haiku": [
+        "obsidian search tag:type/moc (list existing MOCs)",
+        "read MOC header + key questions + depth tracker",
+        "read 00-Dashboard/Backlog.md",
+        "read most recent file in 50-Research-Log/"
+      ],
+      "expected_in_main_context": [
+        "synthesize vault state from returned content",
+        "propose 2-3 backlog items ranked by priority",
+        "ask user for focus and constraints"
+      ],
+      "must_not_delegate": [
+        "synthesis of vault state",
+        "proposal of next steps",
+        "questions to the user"
+      ],
+      "failure_modes": [
+        "Agent reads vault files inline without spawning a sub-agent",
+        "Agent synthesizes state inside the sub-agent prompt",
+        "Agent skips vault reads entirely and asks user directly"
+      ]
+    },
+    {
+      "id": "mr-2",
+      "name": "Investigate — Phase 1 (synthesis) in main context before Phase 2 (write) in Haiku",
+      "prompt": "Research the role of green methanol as a ship fuel. Focus on current production capacity and cost compared to conventional bunker fuel.",
+      "trigger": "investigate_step",
+      "expected_in_main_context": [
+        "web research and synthesis of findings",
+        "determine note title (claim-based)",
+        "determine note body content (insight, evidence, implications)",
+        "determine wikilinks to parent MOC and related notes",
+        "determine frontmatter values"
+      ],
+      "expected_delegates_to_haiku": [
+        "write completed note file with full frontmatter and body",
+        "confirm file written"
+      ],
+      "must_not_delegate": [
+        "web research",
+        "insight extraction",
+        "deciding note title or body content",
+        "deciding wikilinks"
+      ],
+      "ordering_constraint": "Phase 1 (synthesis visible in main turn) MUST appear before Phase 2 (sub-agent write call). A write call without prior synthesis in the same turn is a failure.",
+      "failure_modes": [
+        "Agent spawns Haiku sub-agent to do web research",
+        "Agent writes note file inline without delegating",
+        "Agent delegates Phase 1 and Phase 2 together in one sub-agent call",
+        "Agent writes file before determining full note content"
+      ]
+    },
+    {
+      "id": "mr-3",
+      "name": "Closing — batch delegation of MOC/Backlog/Log writes to Haiku",
+      "prompt": "We're done for today. Please close the session.",
+      "trigger": "closing_step",
+      "expected_in_main_context": [
+        "draft new MOC wikilinks with annotations",
+        "draft depth tracker updates",
+        "draft new Backlog items with wikilinks",
+        "draft full Research Log body (what was done, notes created, open questions, next steps)"
+      ],
+      "expected_delegates_to_haiku": [
+        "apply all MOC edits (wikilinks + depth tracker + questions + gaps)",
+        "apply all Backlog updates (new items + check-offs)",
+        "create Research Log file"
+      ],
+      "must_not_delegate": [
+        "deciding what the session accomplished",
+        "deciding what the next steps are",
+        "drafting the log narrative"
+      ],
+      "ordering_constraint": "All closing content must be drafted in the main context BEFORE the single batch sub-agent call. Multiple Haiku calls for individual closing writes is acceptable but less efficient than one batch call.",
+      "failure_modes": [
+        "Agent updates MOC inline without delegating",
+        "Agent spawns Haiku to decide what goes in the log",
+        "Agent closes without writing a Research Log",
+        "Agent delegates drafting of log narrative to Haiku"
+      ]
+    },
+    {
+      "id": "mr-4",
+      "name": "Vault query — no delegation for pure synthesis questions",
+      "prompt": "What do we know about anti-bot measures on Chinese B2B platforms? Do any of our notes contradict each other?",
+      "trigger": "vault_query",
+      "expected_delegates_to_haiku": [
+        "obsidian search query for relevant notes",
+        "read specific notes returned by search"
+      ],
+      "expected_in_main_context": [
+        "synthesize vault content into a summary",
+        "identify contradictions between notes",
+        "ask user if they want to go deeper"
+      ],
+      "must_not_delegate": [
+        "synthesis of what the vault contains",
+        "contradiction analysis",
+        "the answer to the user"
+      ],
+      "failure_modes": [
+        "Agent synthesizes vault content inside a sub-agent prompt",
+        "Agent answers without reading the vault first",
+        "Agent spawns a sub-agent to analyze contradictions"
+      ]
+    },
+    {
+      "id": "mr-5",
+      "name": "Decomposition — synthesis in main context, writes delegated",
+      "prompt": "Here's a Gemini Deep Research report on IMO 2050 decarbonization regulations. Process it into the vault.\n\n[Simulated 1500-word report on FuelEU Maritime, CII ratings, carbon levies, and their impact on shipping routes]",
+      "trigger": "decomposition_step",
+      "expected_in_main_context": [
+        "identify atomic concepts in the document",
+        "check each concept against atomicity test",
+        "propose decomposition plan to user",
+        "synthesize each note body after approval"
+      ],
+      "expected_delegates_to_haiku": [
+        "save clipping to 10-Inbox/Clippings/ (CLIP- prefix, processed: false)",
+        "obsidian search for existing coverage",
+        "write each approved note file",
+        "mark clipping as processed: true",
+        "update MOC with new links"
+      ],
+      "must_not_delegate": [
+        "identifying atomic concepts",
+        "atomicity test decisions",
+        "the decomposition proposal shown to user",
+        "synthesis of each note body (own words)"
+      ],
+      "ordering_constraint": "Decomposition proposal (main context) must precede user approval which must precede note writes (Haiku). No writes before approval.",
+      "failure_modes": [
+        "Agent delegates atomicity decisions to Haiku",
+        "Agent writes notes before user approves decomposition plan",
+        "Agent delegates note body synthesis to Haiku",
+        "Agent saves clipping inline instead of delegating"
+      ]
+    },
+    {
+      "id": "mr-6",
+      "name": "CLAUDE.md hygiene — detection in main context, migration writes in Haiku",
+      "prompt": "We've been doing this research for three sessions. Can you check if CLAUDE.md needs cleanup?",
+      "trigger": "claude_md_hygiene",
+      "setup": "CLAUDE.md has grown to include: a 'Resolved Decisions' section with 2 findings, a 'Key References' section with 3 URLs, and a 'Current Priorities' section that duplicates Backlog items.",
+      "expected_in_main_context": [
+        "read CLAUDE.md and detect content outside stable sections",
+        "classify each item (resolved decision / reference URL / priority / finding)",
+        "decide migration target for each item",
+        "ask user before migrating if content was clearly user-authored"
+      ],
+      "expected_delegates_to_haiku": [
+        "create PN-* notes for resolved decisions",
+        "create ENT-*/SRC-* notes for reference URLs",
+        "append items to Backlog.md",
+        "edit CLAUDE.md to remove migrated content"
+      ],
+      "must_not_delegate": [
+        "reading CLAUDE.md to detect drift",
+        "classifying what each item is",
+        "deciding migration targets"
+      ],
+      "failure_modes": [
+        "Agent delegates CLAUDE.md drift detection to Haiku",
+        "Agent edits CLAUDE.md inline without delegating",
+        "Agent migrates without asking user about user-authored content",
+        "Agent skips migration and just reports drift"
+      ]
+    }
+  ],
+  "how_to_evaluate": {
+    "method": "Trace the agent's tool calls in order. For each eval:",
+    "steps": [
+      "1. Check that Agent/Task tool is called for every operation listed in expected_delegates_to_haiku",
+      "2. Check that no Agent/Task tool is called for operations in must_not_delegate",
+      "3. For evals with ordering_constraint: verify the sequence of main-turn output vs tool calls",
+      "4. Check failure_modes did NOT occur"
+    ],
+    "pass_criteria": "All expected_delegates_to_haiku operations use Agent/Task tool. All must_not_delegate operations produce output in main turn. No failure_modes observed.",
+    "partial_pass": "expected_delegates_to_haiku met but batch efficiency suboptimal (multiple Haiku calls instead of one). Acceptable for correctness evals, flag for efficiency evals."
+  }
+}
