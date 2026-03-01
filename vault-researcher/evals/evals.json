@@ -1,0 +1,35 @@
+{
+  "skill_name": "vault-researcher",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Research the current state of vertical farming technology. I want to understand the key players, economics, and main challenges.",
+      "expected_output": "Agent should: (1) search vault for existing coverage, (2) create a MOC with key questions and subtopics, (3) confirm scope with user before researching, (4) create atomic notes with proper frontmatter and tags, (5) present findings and ask for direction",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Here's a report from Gemini Deep Research about the European electric vehicle battery supply chain. Process it into my vault.\n\n[Simulated 2000-word report about EU battery gigafactories, raw material sourcing, and recycling regulations]",
+      "expected_output": "Agent should: (1) ask for source_tool and source_query, (2) deposit as clipping, (3) search vault for existing coverage, (4) propose decomposition plan to user BEFORE creating notes, (5) create notes only after approval, (6) link back to clipping",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I have a MOC on renewable energy storage. The depth tracker shows 'Solid-state batteries' at Seed priority High. Go deeper into that area.",
+      "expected_output": "Agent should: (1) read the existing MOC, (2) read existing notes on solid-state batteries, (3) use vault context to avoid duplicating known information, (4) conduct targeted research, (5) create notes that link to existing vault content, (6) update MOC depth tracker",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "What do we know about lithium recycling?",
+      "expected_output": "Agent should: (1) search vault, (2) read relevant notes and MOC, (3) summarize current vault coverage, (4) identify gaps, (5) ask user if they want to research further rather than auto-starting research",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Verify our findings on sodium-ion battery costs. Some notes seem to contradict each other.",
+      "expected_output": "Agent should: (1) find notes tagged confidence/uncertain on this topic, (2) search for corroborating/contradicting evidence, (3) update confidence tags appropriately, (4) report contradictions with > [!danger] callouts, (5) present findings to user",
+      "files": []
+    }
+  ]
+}
