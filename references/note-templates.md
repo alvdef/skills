@@ -1,9 +1,6 @@
 # Note Templates
 
-**All `created` fields use `YYYY-MM-DD HH:mm` (with time).** This is not
-optional — it disambiguates notes created on the same day and makes the
-research log timeline precise. Never write `2026-03-01`; always write
-`2026-03-01 14:30`.
+**All `created` fields use `YYYY-MM-DD HH:mm` (with time).** This is not optional — it disambiguates notes created on the same day and makes the research log timeline precise. Never write `2026-03-01`; always write `2026-03-01 14:30`.
 
 ## Permanent Note (30-Notes/Permanent/)
 
@@ -26,8 +23,7 @@ up:
 ---
 ```
 
-Body: Core insight (1 paragraph) → Supporting evidence (linked sources) →
-Nuances/caveats (`> [!warning]` for confidence notes) → Implications.
+Body: Core insight (1 paragraph) → Supporting evidence (linked sources) → Nuances/caveats (`> [!warning]` for confidence notes) → Implications.
 
 ## Source Note (20-Sources/)
 
@@ -49,8 +45,7 @@ up:
 ---
 ```
 
-Body: Summary (own words) → Key claims (linked to permanent notes) →
-Credibility assessment.
+Body: Summary (own words) → Key claims (linked to permanent notes) → Credibility assessment.
 
 ## Entity Profile (30-Notes/Entity/)
 
@@ -75,11 +70,9 @@ up:
 ---
 ```
 
-Body: Overview → Key facts (table with domain-relevant attributes) →
-Assessment → Sources.
+Body: Overview → Key facts (table with domain-relevant attributes) → Assessment → Sources.
 
-If the user hasn't defined what entity fields matter for their domain,
-ask them on first entity creation.
+If the user hasn't defined what entity fields matter for their domain, ask them on first entity creation.
 
 ## Comparison (30-Notes/Comparison/)
 
@@ -120,12 +113,9 @@ promote_to: permanent|entity|comparison  # intended note type once mature
 ---
 ```
 
-Body: The finding (1–3 sentences) → Source URL → Why it matters (what
-question does it answer?).
+Body: The finding (1–3 sentences) → Source URL → Why it matters (what question does it answer?).
 
-Fleeting notes are temporary — they must be promoted to a proper note type
-or discarded before session end. The `promote_to` field signals what note
-type this should become once there's enough substance.
+Fleeting notes are temporary — they must be promoted to a proper note type or discarded before session end. The `promote_to` field signals what note type this should become once there's enough substance.
 
 ## Clipping (10-Inbox/Clippings/)
 
@@ -143,8 +133,7 @@ up:
 ---
 ```
 
-Preserve original content verbatim below frontmatter. Set `processed: true`
-after decomposition.
+Preserve original content verbatim below frontmatter. Set `processed: true` after decomposition.
 
 ## Research Log (50-Research-Log/)
 
@@ -157,13 +146,29 @@ research_project: "[[MOC-project]]"
 ---
 ```
 
-Body: Session summary → Notes created (wikilinks) → Open questions →
-Next steps.
+Body: Session summary → Notes created (wikilinks) → Open questions → Next steps.
 
-**All entity, note, and MOC mentions in the log prose must use
-`[[wikilinks]]`**, not just the "notes created" list. Use
-`[[ENT-slug|Display Name]]` aliases for readability. The log is part of
-the knowledge graph — plain-text mentions break the link trail.
+**All entity, note, and MOC mentions in the log prose must use `[[wikilinks]]`**, not just the "notes created" list. Use `[[ENT-slug|Display Name]]` aliases for readability. The log is part of the knowledge graph — plain-text mentions break the link trail.
+
+## Output (60-Outputs/)
+
+```yaml
+---
+title: "Output type: subject"
+tags:
+  - type/output
+  - source/ai-generated
+created: YYYY-MM-DD HH:mm
+output_type: brief|report|summary
+up:
+  - "[[MOC-parent]]"
+sources:
+  - "[[PN-source-note]]"
+  - "[[ENT-entity]]"
+---
+```
+
+Body: Structure depends on `output_type`. Cite vault notes as `[[wikilinks]]` throughout — the output is part of the knowledge graph. Flag thin coverage with `> [!warning] Gap` callouts.
 
 ## Question Note (10-Inbox/Fleeting/ → 30-Notes/Permanent/ when answered)
 
@@ -181,12 +186,9 @@ up:
 ---
 ```
 
-Body: The question → Why it matters → What answering it would unblock →
-Known leads (wikilinks to relevant notes).
+Body: The question → Why it matters → What answering it would unblock → Known leads (wikilinks to relevant notes).
 
-Question notes live in `10-Inbox/Fleeting/` with a `Q-` prefix until
-answered. Once answered, promote to a Permanent note in
-`30-Notes/Permanent/` — the answer becomes the claim-based title.
+Question notes live in `10-Inbox/Fleeting/` with a `Q-` prefix until answered. Once answered, promote to a Permanent note in `30-Notes/Permanent/` — the answer becomes the claim-based title.
 
 ## Hypothesis Note (30-Notes/Permanent/)
 
@@ -212,9 +214,6 @@ up:
 ---
 ```
 
-Body: The hypothesis (1 sentence) → Rationale → Evidence for (linked) →
-Evidence against (linked) → What would confirm or refute it.
+Body: The hypothesis (1 sentence) → Rationale → Evidence for (linked) → Evidence against (linked) → What would confirm or refute it.
 
-Hypotheses start at `confidence/speculative`. As evidence accumulates,
-update confidence per the tag taxonomy. Use `> [!warning]` callouts for
-key assumptions.
+Hypotheses start at `confidence/speculative`. As evidence accumulates, update confidence per the tag taxonomy. Use `> [!warning]` callouts for key assumptions.

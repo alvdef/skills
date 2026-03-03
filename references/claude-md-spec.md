@@ -1,15 +1,10 @@
 # CLAUDE.md Specification
 
-`CLAUDE.md` lives at the vault root and loads at every Claude Code session.
-It is a **project README for the agent** — stable domain context. It is NOT
-a research notepad, a backlog, or a summary of findings. Those live in the
-vault.
+`CLAUDE.md` lives at the vault root and loads at every Claude Code session. It is a **project README for the agent** — stable domain context. It is NOT a research notepad, a backlog, or a summary of findings. Those live in the vault.
 
 ## The Rule
 
-If a piece of information would be correct next week without any changes,
-it belongs in `CLAUDE.md`. If it changes as research progresses, it belongs
-in the vault.
+If a piece of information would be correct next week without any changes, it belongs in `CLAUDE.md`. If it changes as research progresses, it belongs in the vault.
 
 ## Sections That Belong in CLAUDE.md
 
@@ -35,11 +30,7 @@ That's it. Four sections.
 
 ## Why This Matters
 
-When CLAUDE.md accumulates research, the same information ends up in two
-places — the file and the vault. They drift. Findings in CLAUDE.md don't
-benefit from wikilinks, tags, confidence tracking, or MOC integration.
-The vault becomes incomplete; CLAUDE.md becomes a parallel (and unreliable)
-knowledge base.
+When CLAUDE.md accumulates research, the same information ends up in two places — the file and the vault. They drift. Findings in CLAUDE.md don't benefit from wikilinks, tags, confidence tracking, or MOC integration. The vault becomes incomplete; CLAUDE.md becomes a parallel (and unreliable) knowledge base.
 
 The vault is the second brain. CLAUDE.md is just the door.
 
@@ -50,7 +41,7 @@ The vault is the second brain. CLAUDE.md is just the door.
 
 <!--
   Stable project context. Read at every session start.
-  Vault conventions → vault-researcher skill references/
+  Vault conventions → obsidian-deep-research skill references/
   Research state → vault (MOCs, Backlog.md, Research-Log/)
   This file answers: what are we researching and who for?
 -->
@@ -78,14 +69,11 @@ The vault is the second brain. CLAUDE.md is just the door.
 
 ## Hygiene Check (run at session close)
 
-At the end of every session the agent checks whether `CLAUDE.md` has grown
-beyond these four sections. If it has:
+At the end of every session the agent checks whether `CLAUDE.md` has grown beyond these four sections. If it has:
 
 1. Identify what drifted in (findings, URLs, decisions, priorities)
 2. Migrate each item to the correct vault location (see the table above)
 3. Remove the migrated content from `CLAUDE.md`
 4. Report to the user: "Migrated X items from CLAUDE.md to the vault."
 
-If the user intentionally added something to `CLAUDE.md` during a session,
-ask before migrating: "I see you added {X} to CLAUDE.md — should I move
-it to {suggested location} or keep it here?"
+If the user intentionally added something to `CLAUDE.md` during a session, ask before migrating: "I see you added {X} to CLAUDE.md — should I move it to {suggested location} or keep it here?"

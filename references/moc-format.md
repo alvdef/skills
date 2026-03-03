@@ -1,7 +1,6 @@
 # MOC Format
 
-Create a MOC at the start of any research initiative. Every note must have
-a parent MOC.
+Create a MOC at the start of any research initiative. Every note must have a parent MOC.
 
 ```yaml
 ---
@@ -15,8 +14,7 @@ parent_moc: "[[MOC-parent]]"  # only for sub-MOCs; omit for top-level MOCs
 ---
 ```
 
-`parent_moc` is only present on child MOCs promoted from a section of a
-parent MOC (see sub-MOC promotion in `SKILL.md`). Top-level MOCs omit it.
+`parent_moc` is only present on child MOCs promoted from a section of a parent MOC (see sub-MOC promotion in `SKILL.md`). Top-level MOCs omit it.
 
 ```markdown
 # {Title}

@@ -5,16 +5,13 @@ Two-level hierarchical tags. A note can have many.
 ## Core Namespaces
 
 ### type/
-`permanent` · `source` · `entity` · `comparison` · `moc` · `fleeting` ·
-`clipping` · `log` · `output` · `question` · `hypothesis`
+`permanent` · `source` · `entity` · `comparison` · `moc` · `fleeting` · `clipping` · `log` · `output` · `question` · `hypothesis`
 
 ### status/
 `seed` (🌱) · `growing` (🔄) · `mature` (✅) · `stale` (⚠️)
 
 ### confidence/
-`verified` (cross-referenced primary) · `likely` (2+ secondary sources) ·
-`uncertain` (single source or AI-generated) · `speculative` (hypothesis) ·
-`contradicted` (evidence against)
+`verified` (cross-referenced primary) · `likely` (2+ secondary sources) · `uncertain` (single source or AI-generated) · `speculative` (hypothesis) · `contradicted` (evidence against)
 
 AI-generated notes always start at `uncertain`.
 

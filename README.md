@@ -1,32 +1,94 @@
-# Vault Researcher
+A [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill for doing structured deep research in a Obsidian vault.
 
-An [Agent Skill](https://agentskills.io/specification) that turns Claude into a research partner for your Obsidian vault. Give it a topic and it searches the web, synthesizes findings into structured notes, links everything together, and asks what to dig into next.
+Feed it a topic or a deep research report. It creates atomic notes, entity profiles, comparison tables, and Maps of Content with wikilinks, structured frontmatter, and source citations. Sessions compound: the agent reads the vault before writing, links to what exists, and fills gaps.
 
-Inspired by [Obsidian: The King of Learning Tools](https://youtu.be/hSTy_BInQs8?si=Ai9_s4XWiYTMyQJJ) by Odysseas.
-
-## What it does
-
-You give it a topic, a question, or a document. It uses Claude's web search to research the subject, creates notes from what it finds, connects them to your existing knowledge, and surfaces new questions. You decide whether to go deeper, pivot, or stop — it never continues without asking.
-
-- **Research** — searches the web, creates notes from findings, links them into your vault, surfaces new questions and contradictions, repeats with your approval
-- **Decomposition** — takes a document (PDF, AI report, pasted text) and breaks it into individual notes, each rewritten and linked
-- **Verification** — finds uncertain notes and searches for corroborating or contradicting evidence to update their confidence level
-
-Every session ends with a closing checklist: update index pages, refresh the research backlog, write a timestamped log entry, and clean up project context.
-
-## How opinionated it is
-
-Very. The skill follows a [Zettelkasten](https://en.wikipedia.org/wiki/Zettelkasten)-inspired methodology and enforces a specific structure for folder layout, file naming, frontmatter schemas, tagging, and linking. Every note must connect to an index page and at least one related note. Note titles state a claim, not a topic. AI-generated notes are tagged as uncertain until verified.
-
-If you want a lighter system, this isn't the skill for you. If you want a vault that stays searchable and connected over months of research, it will do the work to keep it that way.
-
-## Requirements
-
-- [`obsidian` CLI](https://help.obsidian.md/cli) (from [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills))
-- [`defuddle-cli`](https://github.com/kepano/defuddle-cli) (`npm install -g defuddle-cli`)
+The skill follows a [Zettelkasten](https://en.wikipedia.org/wiki/Zettelkasten)-inspired methodology and enforces a specific structure for folder layout, file naming, frontmatter schemas, tagging, and linking. Every note must connect to an index page and at least one related note. Note titles state a claim, not a topic. AI-generated notes are tagged as uncertain until verified.
 
 
+## How it works
 
-## License
+```
+Deep research report (Gemini, ChatGPT, Claude)
+        │
+        ▼
+  Drop into vault as clipping
+        │
+        ▼
+  Agent decomposes → follows source URLs → goes deeper
+        │
+        ▼
+  Atomic notes ← wikilinks → Entity profiles
+        │                          │
+        ▼                          ▼
+  MOC updated              Comparison tables
+        │
+        ▼
+  Next session picks up where this one stopped
+```
 
-MIT
+
+> Export Gemini Deep Research reports with [this Chrome extension](https://chromewebstore.google.com/detail/gemini-deep-research-expo/cihgcaoagikkalihppohhhhlkafeaomc) (not affiliated). Default Gemini exports strip URLs. The agent needs them to follow sources.
+
+> For Claude Research, ask it for the most relevant sources used in the report.
+
+## Install
+
+```bash
+claude skill add alvdef/skills --skill obsidian-deep-research
+```
+
+Requires:
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (Max or API)
+- [Obsidian](https://obsidian.md/)
+- [`obsidian` CLI](https://github.com/kepano/obsidian-skills) (auto-installed on first run)
+- [`defuddle` CLI](https://www.npmjs.com/package/defuddle-cli) (optional, recommendended on `obsidian-skills`)
+
+
+## Note types
+
+| Type | What |
+|------|------|
+| Permanent | Atomic claim or insight |
+| Entity | Org, tool, method |
+| Comparison | Structured comparison |
+| Source | What a source said |
+| Clipping | Verbatim material |
+| MOC | Hub for a topic cluster |
+| Research log | Session audit trail |
+
+Notes carry structured frontmatter (type, status, confidence, source, domain), annotated wikilinks, and a parent MOC link.
+
+## Vault structure
+
+```
+VAULT ROOT/
+├── 00-Dashboard/        # Home note, master index
+├── 10-Inbox/
+│   ├── Fleeting/        # Raw captures
+│   └── Clippings/       # AI reports, web clips preserved verbatim
+├── 20-Sources/          # Markdown notes summarizing references (1 note per source)
+│   ├── Articles/
+│   └── Reports/
+├── 30-Notes/
+│   ├── Permanent/       # Atomic insight notes (one idea per note)
+│   ├── Entity/          # Profiles: companies, people, platforms
+│   └── Comparison/      # Side-by-side analyses
+├── 40-Maps/             # Maps of Content (MOC) — topic hub notes
+├── 50-Research-Log/     # Session logs (YYYY-MM-DD_HHmm.md)
+├── 60-Outputs/          # Deliverables: briefs, reports
+├── 70-Archive/          # Completed/deprecated
+└── 80-Attachments/      # Binary files only: PDFs, images, CSVs
+```
+
+
+## Status
+
+Sharing early because it worked. Feedback welcome on note quality, model routing, missing features, and anything that breaks.
+
+## Built with
+
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
+- [obsidian-skills](https://github.com/kepano/obsidian-skills) by kepano
+- [Obsidian](https://obsidian.md/)
+
+MIT license.
