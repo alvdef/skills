@@ -1,29 +1,11 @@
 ---
 name: obsidian-deep-research
-description: >
-  Use this skill whenever the user mentions an Obsidian vault, knowledge base,
-  MOC, atomic notes, or research backlog — it contains the vault's note
-  templates, folder structure, tagging system, and research methodology that
-  cannot be replicated without consulting it. Activate for: researching topics
-  and creating vault notes, processing documents or reports into atomic notes,
-  querying existing vault knowledge ("what do we know about X"), verifying
-  findings, managing Maps of Content, or continuing a previous research session.
-  Also use when the user says "research", "investigate", "dig into", "look
-  into", "explore", "go deeper", "break this down", "add to vault", "check the
-  backlog", or provides a document/PDF/AI report for vault integration. Do not
-  use for vault housekeeping (file renaming, reorganization), Obsidian plugin
-  setup, theme customization, or Dataview queries.
+description: Builds and grows an Obsidian knowledge base through iterative deep research using zettelkasten methodology. Processes documents into atomic vault notes, researches topics from the web, queries existing vault knowledge, and manages research backlogs. Use when the user mentions an Obsidian vault, MOCs, atomic notes, research backlog, or asks to research, investigate, or add findings to their vault. Also use when given a document or report for vault integration.
 license: MIT
-compatibility: >
-  Requires Claude Code (sub-agents, Bash tool, model routing) and obsidian
-  CLI (kepano/obsidian-skills). Recommended: defuddle CLI (defuddle-cli npm
-  package) for web extraction; falls back to WebFetch. Companion: obsidian-markdown
-  skill for Obsidian syntax reference. Not compatible with Claude.ai.
+compatibility: Requires Claude Code with sub-agents and Bash tool. Requires obsidian CLI (kepano/obsidian-skills). Recommended defuddle CLI (defuddle-cli npm package).
 metadata:
   author: alvdef
-  version: "1.0.0"
-  category: research
-  tags: "obsidian, knowledge-management, research, zettelkasten, notes"
+  version: 1.0.0
 ---
 
 # Vault Researcher

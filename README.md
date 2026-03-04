@@ -34,7 +34,7 @@ Deep research report (Gemini, ChatGPT, Claude)
 ## Install
 
 ```bash
-claude skill add alvdef/skills --skill obsidian-deep-research
+/install alvdef/obsidian-deep-research
 ```
 
 Requires:
@@ -91,4 +91,8 @@ Sharing early because it worked. Feedback welcome on note quality, model routing
 - [obsidian-skills](https://github.com/kepano/obsidian-skills) by kepano
 - [Obsidian](https://obsidian.md/)
 
-MIT license.
+## Special thanks
+
+- [Zettelkasten](https://zettelkasten.de/) — blog on the method behind the note structure
+- [Obsidian: The King of Learning Tools](https://www.youtube.com/watch?v=hSTy_BInQs8) by Odysseas
+
