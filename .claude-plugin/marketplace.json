@@ -1,24 +1,21 @@
 {
-  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "alvdef-skills",
-  "description": "Research partner for Obsidian vaults with opinionated Zettelkasten-style knowledge graph",
-  "version": "1.0.0",
+  "name": "alvdef-obsidian-deep-research",
   "owner": {
     "name": "alvdef",
     "url": "https://github.com/alvdef"
+  },
+  "metadata": {
+    "description": "Research partner for Obsidian vaults with opinionated Zettelkasten-style knowledge graph",
+    "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "obsidian-deep-research",
       "description": "Turns Claude into a research partner for your Obsidian vault. Runs the full research loop (web research, source decomposition, note synthesis, and vault maintenance) while enforcing a consistent Zettelkasten-style knowledge graph.",
-      "version": "1.0.0",
-      "author": {
-        "name": "alvdef"
-      },
-      "source": ".",
-      "category": "productivity",
-      "homepage": "https://github.com/alvdef/skills",
-      "tags": ["obsidian", "research", "zettelkasten", "knowledge-management"]
+      "source": "./",
+      "skills": [
+        "./"
+      ]
     }
   ]
 }
